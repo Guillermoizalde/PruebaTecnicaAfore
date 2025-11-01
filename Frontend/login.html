@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Banco Azteca</title>
+    <link rel="stylesheet" href="/css/styles.css"> <!-- Tu CSS existente -->
+    <style>
+        /* Estilos mínimos para el login */
+        body { 
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #00A859 0%, #007A3D 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 400px;
+            width: 100%;
+        }
+        .login-box h1 {
+            color: #00A859;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+        .btn-login {
+            width: 100%;
+            padding: 12px;
+            background: #00A859;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .btn-login:hover {
+            background: #007A3D;
+        }
+        .alert {
+            padding: 10px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .alert-danger { background: #fee; color: #c33; }
+        .alert-success { background: #efe; color: #3c3; }
+        .credentials {
+            background: #f5f5f5;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-box">
+        <h1>BANCO AZTECA</h1>
+        <p style="text-align: center; color: #666; margin-bottom: 20px;">Gestión de Clientes</p>
+        
+        <div id="mensaje"></div>
+        
+        <form action="/login" method="post">
+            <div class="form-group">
+                <label>Usuario</label>
+                <input type="text" name="username" required autofocus>
+            </div>
+            
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" name="password" required>
+            </div>
+            
+            <button type="submit" class="btn-login">Iniciar Sesión</button>
+        </form>
+        
+        <div class="credentials">
+            <strong>Credenciales de prueba:</strong><br>
+            Usuario: admin | Contraseña: admin123
+        </div>
+    </div>
+    
+    <script>
+        const params = new URLSearchParams(window.location.search);
+        const mensaje = document.getElementById('mensaje');
+        
+        if (params.get('error')) {
+            mensaje.innerHTML = '<div class="alert alert-danger">Usuario o contraseña incorrectos</div>';
+        }
+        if (params.get('logout')) {
+            mensaje.innerHTML = '<div class="alert alert-success">Sesión cerrada correctamente</div>';
+        }
+    </script>
+</body>
+</html>
