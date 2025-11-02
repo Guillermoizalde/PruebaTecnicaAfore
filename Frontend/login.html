@@ -1,114 +1,217 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Banco Azteca</title>
-    <link rel="stylesheet" href="/css/styles.css"> <!-- Tu CSS existente -->
-    <style>
-        /* Estilos mínimos para el login */
-        body { 
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #00A859 0%, #007A3D 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .login-box {
-            background: white;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            max-width: 400px;
-            width: 100%;
-        }
-        .login-box h1 {
-            color: #00A859;
-            text-align: center;
-            margin-bottom: 30px;
-        }
-        .form-group {
-            margin-bottom: 20px;
-        }
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            color: #333;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        .btn-login {
-            width: 100%;
-            padding: 12px;
-            background: #00A859;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-        .btn-login:hover {
-            background: #007A3D;
-        }
-        .alert {
-            padding: 10px;
-            margin-bottom: 20px;
-            border-radius: 5px;
-        }
-        .alert-danger { background: #fee; color: #c33; }
-        .alert-success { background: #efe; color: #3c3; }
-        .credentials {
-            background: #f5f5f5;
-            padding: 15px;
-            border-radius: 5px;
-            margin-top: 20px;
-            font-size: 12px;
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login - Banco Azteca</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+  <style>
+    body {
+      font-family: "Poppins", sans-serif;
+      background: linear-gradient(135deg, #f3f5f2, #e9f3ec);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+    }
+
+    .card-login {
+      width: 420px;
+      max-width: 95%;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .card-login .card-header {
+      background-color: #ffffff;
+      color: rgb(138, 36, 36);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .card-login .card-header img {
+      height: 44px;
+      margin-left: 8px;
+    }
+
+    .btn-azteca {
+      background-color: #006c3b;
+      color: #fff;
+      border: none;
+    }
+
+    .btn-azteca:hover {
+      background-color: #00994c;
+    }
+
+    .form-control:focus {
+      box-shadow: 0 0 0 0.2rem rgba(0,108,59,0.18);
+      border-color: #006c3b;
+    }
+
+    .small-hint {
+      font-size: .9rem;
+      color: #6c757d;
+    }
+  </style>
 </head>
 <body>
-    <div class="login-box">
-        <h1>BANCO AZTECA</h1>
-        <p style="text-align: center; color: #666; margin-bottom: 20px;">Gestión de Clientes</p>
-        
-        <div id="mensaje"></div>
-        
-        <form action="/login" method="post">
-            <div class="form-group">
-                <label>Usuario</label>
-                <input type="text" name="username" required autofocus>
-            </div>
-            
-            <div class="form-group">
-                <label>Contraseña</label>
-                <input type="password" name="password" required>
-            </div>
-            
-            <button type="submit" class="btn-login">Iniciar Sesión</button>
-        </form>
-        
-        <div class="credentials">
-            <strong>Credenciales de prueba:</strong><br>
-            Usuario: admin | Contraseña: admin123
-        </div>
+  <div class="card card-login">
+    <div class="card-header px-4 py-3">
+      <img src="./logo_Banco_Azteca-removebg-preview.png" alt="Banco Azteca". style="display: flex; justify-content: center; align-items: center;">
     </div>
-    
-    <script>
-        const params = new URLSearchParams(window.location.search);
-        const mensaje = document.getElementById('mensaje');
-        
-        if (params.get('error')) {
-            mensaje.innerHTML = '<div class="alert alert-danger">Usuario o contraseña incorrectos</div>';
+
+    <div class="card-body p-4">
+      <form id="loginForm" onsubmit="return onLoginSubmit(event)">
+        <div class="mb-3">
+          <label for="username" class="form-label">Usuario</label>
+          <input id="username" name="username" type="text" class="form-control" placeholder="Usuario" required>
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label">Contraseña</label>
+          <input id="password" name="password" type="password" class="form-control" placeholder="Contraseña" required minlength="4">
+        </div>
+
+        <div class="d-grid mb-3">
+          <button id="btnLogin" class="btn btn-azteca btn-lg" type="submit">Iniciar Sesión</button>
+        </div>
+
+        <div class="text-center small-hint">
+          ¿Problemas para iniciar sesión? Verifica usuario y contraseña.
+        </div>
+      </form>
+    </div>
+
+    <div class="card-footer text-center small small-hint py-2">
+      Bienvenido al Sistema de registro de clientes de Banco Azteca
+    </div>
+  </div>
+
+  <script>
+    // ***************** CONFIG *****************
+    // Cambia esta URL si tu endpoint de autenticación es diferente.
+    // Ejemplos: "http://localhost:9090/api/login" o "http://localhost:9000/api/Login"
+    const AUTH_URL = "http://localhost:9090/api/login";
+
+    // Nombre de la key donde guardamos token en localStorage
+    const TOKEN_KEY = "authToken";
+
+    // ******************************************
+
+    // Validación simple del formulario antes de enviar
+    function validateLoginInputs(username, password) {
+      if (!username || username.trim().length === 0) {
+        Swal.fire({ icon: "error", title: "Usuario requerido", text: "Ingresa tu usuario." });
+        return false;
+      }
+      if (!password || password.length < 4) {
+        Swal.fire({ icon: "error", title: "Contraseña inválida", text: "La contraseña debe tener al menos 4 caracteres." });
+        return false;
+      }
+      return true;
+    }
+
+    // Maneja el submit del formulario
+    async function onLoginSubmit(event) {
+      event.preventDefault();
+
+      const username = document.getElementById("username").value.trim();
+      const password = document.getElementById("password").value;
+
+      if (!validateLoginInputs(username, password)) return false;
+
+      document.getElementById("btnLogin").disabled = true;
+      document.getElementById("btnLogin").textContent = "Conectando...";
+
+      try {
+        const res = await fetch(AUTH_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ username, password })
+        });
+
+        if (!res.ok) {
+          // Try to extract error message if backend sends JSON
+          let msg = `Error ${res.status}`;
+          try { const err = await res.json(); if (err && err.message) msg = err.message; } catch (_) {}
+          Swal.fire({ icon: "error", title: "Inicio de sesión fallido", text: msg });
+          return false;
         }
-        if (params.get('logout')) {
-            mensaje.innerHTML = '<div class="alert alert-success">Sesión cerrada correctamente</div>';
+
+        // Backend puede retornar token con diferentes nombres: token, accessToken, jwt
+        let payload;
+        try { payload = await res.json(); } catch (e) { payload = null; }
+
+        let token = null;
+        if (payload) {
+          token = payload.token || payload.accessToken || payload.jwt || payload.authToken || null;
         }
-    </script>
+
+        // Si no hay token, pero status 200 => tratamos como OK (puedes adaptar)
+        if (!token && res.status === 200) {
+          // si tu backend no devuelve token, cambia esto según tu implementación
+          // aquí guardamos la respuesta completa como string por si contiene info útil
+          localStorage.setItem(TOKEN_KEY, JSON.stringify(payload || { logged: true }));
+        } else if (token) {
+          localStorage.setItem(TOKEN_KEY, token);
+        } else {
+          // No token y no payload: guardamos bandera simple
+          localStorage.setItem(TOKEN_KEY, "OK");
+        }
+
+        Swal.fire({ icon: "success", title: "Bienvenido", timer: 1000, showConfirmButton: false });
+
+        // redirigir a la app principal (cambia la ruta si corresponde)
+        setTimeout(() => {
+          // Ejemplo: index.html es tu app principal
+          window.location.href = "index.html";
+        }, 900);
+
+      } catch (err) {
+        console.error("Login error:", err);
+        Swal.fire({ icon: "error", title: "Error de conexión", text: "No se pudo conectar al servidor." });
+      } finally {
+        document.getElementById("btnLogin").disabled = false;
+        document.getElementById("btnLogin").textContent = "Iniciar Sesión";
+      }
+
+      return true;
+    }
+
+    // ----------------- Helpers para usar el token en otras peticiones -----------------
+    // Ejemplo de función que hace fetch con la cabecera Authorization usando el token guardado
+    async function fetchWithAuth(url, options = {}) {
+      const token = localStorage.getItem(TOKEN_KEY);
+      const headers = options.headers ? { ...options.headers } : {};
+      if (token) {
+        // Si guardaste un objeto JSON stringify, el backend puede requerir "Bearer <token>"
+        // Ajusta aquí según lo que tu backend espere: "Bearer ...", o solo el token.
+        headers["Authorization"] = token.startsWith("Bearer ") ? token : `Bearer ${token}`;
+      }
+      return fetch(url, { ...options, headers });
+    }
+    // ----------------------------------------------------------------------------------
+
+    // Si quieres limpiar sesión:
+    function logout() {
+      localStorage.removeItem(TOKEN_KEY);
+      window.location.href = "login.html"; // o donde tengas el login
+    }
+  </script>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

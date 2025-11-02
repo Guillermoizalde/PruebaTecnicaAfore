@@ -69,6 +69,38 @@
     </button>
   </div>
 
+  <!-- 🔙 Botón de regresar -->
+<div class="text-center mt-3">
+  <button id="btnRegresar" class="btn btn-outline-success">
+    <i class="fas fa-arrow-left"></i> Regresar
+  </button>
+</div>
+
+<script>
+  document.getElementById("btnRegresar").addEventListener("click", function() {
+    // Redirige a la pantalla anterior (por ejemplo, index.html o el home)
+    window.location.href = "index.html";
+  });
+</script>
+
+<style>
+  #btnRegresar {
+    border-radius: 8px;
+    border: 2px solid #006341;
+    color: #006341;
+    font-weight: 600;
+    padding: 8px 20px;
+    transition: 0.3s;
+  }
+
+  #btnRegresar:hover {
+    background-color: #006341;
+    color: white;
+    transform: scale(1.05);
+  }
+</style>
+
+
   <!-- Modal Registrar -->
   <div class="modal fade" id="modalRegistro" tabindex="-1">
     <div class="modal-dialog">
@@ -104,6 +136,43 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal Editar -->
+<div class="modal fade" id="modalEditar" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar Cliente</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formEditar">
+          <input type="hidden" id="editarId">
+          <div class="mb-3">
+            <label class="form-label">Nombre</label>
+            <input type="text" id="editarNombre" class="form-control" required pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ ]+">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Fecha de Nacimiento</label>
+            <input type="date" id="editarFechaNacimiento" class="form-control" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Celular</label>
+            <input type="text" id="editarCelular" class="form-control" required pattern="^[0-9]{10}$">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Correo Electrónico</label>
+            <input type="email" id="editarCorreoElectronico" class="form-control" required>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn btn-azteca" onclick="guardarCambios()">Guardar Cambios</button>
+      </div>
+    </div>
+  </div>
+</div>
 
   <!-- Modal Listar -->
   <div class="modal fade" id="modalListar" tabindex="-1">
@@ -171,6 +240,83 @@
 
       return true;
     }
+
+
+  async function editarCliente(id) {
+    const response = await fetch(`${API_URL}/${id}`);
+    const cliente = await response.json();
+
+    document.getElementById("editarId").value = cliente.id;
+    document.getElementById("editarNombre").value = cliente.nombre;
+    document.getElementById("editarFechaNacimiento").value = cliente.fechaNacimiento.split("T")[0];
+    document.getElementById("editarCelular").value = cliente.celular;
+    document.getElementById("editarCorreoElectronico").value = cliente.correoElectronico;
+
+    const modalEditar = new bootstrap.Modal(document.getElementById("modalEditar"));
+    modalEditar.show();
+  }
+
+  async function guardarCambios() {
+    const id = document.getElementById("editarId").value;
+    const nombre = document.getElementById("editarNombre").value.trim();
+    const fechaNacimiento = document.getElementById("editarFechaNacimiento").value;
+    const celular = document.getElementById("editarCelular").value.trim();
+    const correo = document.getElementById("editarCorreoElectronico").value.trim();
+
+    if (!/^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$/.test(nombre)) {
+      Swal.fire('Error', 'El nombre solo debe contener letras.', 'error');
+      return;
+    }
+
+    const fechaNac = new Date(fechaNacimiento);
+    const hoy = new Date();
+    const edad = hoy.getFullYear() - fechaNac.getFullYear();
+    const mes = hoy.getMonth() - fechaNac.getMonth();
+    const edadFinal = mes < 0 || (mes === 0 && hoy.getDate() < fechaNac.getDate()) ? edad - 1 : edad;
+
+    if (isNaN(fechaNac) || edadFinal < 18) {
+      Swal.fire('Error', 'El cliente debe tener al menos 18 años.', 'error');
+      return;
+    }
+
+    if (!/^[0-9]{10}$/.test(celular)) {
+      Swal.fire('Error', 'El número de celular debe tener 10 dígitos.', 'error');
+      return;
+    }
+
+    const correoRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!correoRegex.test(correo)) {
+      Swal.fire('Error', 'El formato del correo electrónico no es válido.', 'error');
+      return;
+    }
+
+    const clienteActualizado = {
+      nombre,
+      fechaNacimiento,
+      celular,
+      correoElectronico: correo
+    };
+
+    const response = await fetch(`${API_URL}/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(clienteActualizado)
+    });
+
+    if (response.ok) {
+      Swal.fire('Actualizado', 'Cliente actualizado correctamente', 'success');
+      bootstrap.Modal.getInstance(document.getElementById("modalEditar")).hide();
+      listarClientes();
+    } else {
+      Swal.fire('Error', 'No se pudo actualizar el cliente', 'error');
+    }
+  }
+
+  // Funcion para actualizar cliente
+
+
+
+
 
     async function registrarCliente() {
       const cliente = {
@@ -267,5 +413,14 @@
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+  // Detecta clic en el botón "Regresar"
+  document.getElementById("btnRegresar").addEventListener("click", function() {
+    // Redirige al archivo de login
+    window.location.href = "login.html";
+  });
+</script>
+
 </body>
 </html>
